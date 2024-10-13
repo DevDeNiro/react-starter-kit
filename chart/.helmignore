@@ -1,0 +1,21 @@
+# Common vcs dirs
+
+.git/
+.svn/
+.hg/
+gitignore
+
+# Common backup files
+
+*.bak
+*.swp
+*.swo
+*.tmp
+
+# Various IDEs
+
+.idea/
+.vscode/
+.project
+.classpath
+*.tmproj

@@ -1,0 +1,13 @@
+apiVersion: v2
+name: hello-world-react
+description: Simple starter project for Nginx / React (Hello World)
+type: application
+version: 0.0.0
+appVersion: 0.0.0
+
+dependencies:
+  - name: nginx
+    version: 1.36.0
+#    repository: @helm-releases
+    repository: https://kubernetes-charts.storage.googleapis.com/
+    alias: frontend
