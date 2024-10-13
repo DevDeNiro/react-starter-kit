@@ -1,0 +1,17 @@
+node_modules
+dist
+logs
+.env
+
+# Chart
+charts/charts/*.tgz
+*.local
+
+# Editor directories and files
+.DS_Store
+.vscode
+.idea
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
