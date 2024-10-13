@@ -1,6 +1,8 @@
+# Project directories
 node_modules
 dist
 logs
+coverage
 .env
 
 # Chart
