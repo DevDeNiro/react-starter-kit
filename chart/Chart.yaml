@@ -6,8 +6,8 @@ version: 0.0.0
 appVersion: 0.0.0
 
 dependencies:
-  - name: nginx
-    version: 1.36.0
-#    repository: @helm-releases
-    repository: https://kubernetes-charts.storage.googleapis.com/
-    alias: frontend
+    - name: nginx
+      version: 1.36.0
+      #    repository: @helm-releases
+      repository: https://kubernetes-charts.storage.googleapis.com/
+      alias: frontend

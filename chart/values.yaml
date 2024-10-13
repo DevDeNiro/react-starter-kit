@@ -1,24 +1,24 @@
 global:
-  image:
-    repository: "nginx"
-    tag: "1.19.6"
-  service:
-    type: "NodePort"
-    port: 80
-    targetPort: 80
-    nodePort: 30080
-  ingress:
-    enabled: true
-    annotations:
-      kubernetes.io/ingress.class: private-iks-k8s-nginx
-      nginx.ingress.kubernetes.io/force-ssl-redirect: "false"
-      nginx.ingress.kubernetes.io/ssl-passthrough: "false"
-    hosts:
-      - host: chart-example.local
-        paths:
-          - "/"
-    tls:
-      # Ingress certificate
-      - secretName: chart-example-tls
+    image:
+        repository: "nginx"
+        tag: "1.19.6"
+    service:
+        type: "NodePort"
+        port: 80
+        targetPort: 80
+        nodePort: 30080
+    ingress:
+        enabled: true
+        annotations:
+            kubernetes.io/ingress.class: private-iks-k8s-nginx
+            nginx.ingress.kubernetes.io/force-ssl-redirect: "false"
+            nginx.ingress.kubernetes.io/ssl-passthrough: "false"
         hosts:
-          - chart-example.local
+            - host: chart-example.local
+              paths:
+                  - "/"
+        tls:
+            # Ingress certificate
+            - secretName: chart-example-tls
+              hosts:
+                  - chart-example.local

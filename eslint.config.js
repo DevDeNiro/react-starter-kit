@@ -2,7 +2,7 @@ import js from "@eslint/js";
 import globals from "globals";
 import reactHooks from "eslint-plugin-react-hooks";
 import reactRefresh from "eslint-plugin-react-refresh";
-import tseslint from "typescript-eslint";
+import tseslint, { plugin } from "typescript-eslint";
 // FIX: "lint": --max-warnings 0 --fix
 export default tseslint.config({
     ignores: [
@@ -23,6 +23,7 @@ export default tseslint.config({
     plugins: {
         "react-hooks": reactHooks,
         "react-refresh": reactRefresh,
+        "jsx-a11y": { enabled: false },
     },
     rules: {
         ...reactHooks.configs.recommended.rules,
