@@ -3,6 +3,7 @@ node_modules
 dist
 logs
 coverage
+storybook-static/
 .env
 
 # Chart
@@ -17,3 +18,4 @@ charts/charts/*.tgz
 *.ntvs*
 *.njsproj
 *.sln
+*storybook.log
