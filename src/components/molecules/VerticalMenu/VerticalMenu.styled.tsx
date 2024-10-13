@@ -5,7 +5,7 @@ const VerticalMenuStyled = styled.nav`
     overflow: hidden;
     height: calc(100vh - 4rem);
     background: #393e46;
-    transition: width 0.5s ease-out;
+    transition: width 0.4s ease-out;
     color: white;
 
     .vertical-menu-content {
@@ -32,7 +32,7 @@ const VerticalMenuStyled = styled.nav`
             transition: opacity 0.2s ease-out;
 
             &:hover {
-                opacity: 0.8;
+                opacity: 0.7;
             }
         }
     }
@@ -40,7 +40,7 @@ const VerticalMenuStyled = styled.nav`
     &.hidden {
         width: 0;
 
-        .cover-menu-content {
+        .vertical-menu-content {
             opacity: 0;
         }
     }
@@ -63,7 +63,7 @@ const VerticalMenuStyled = styled.nav`
         }
     }
 
-    @media screen and (max-width: 768px) {
+    @media screen and (max-width: 500px) {
         &.visibility {
             width: 100vw;
         }

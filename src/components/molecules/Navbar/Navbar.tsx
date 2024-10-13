@@ -18,6 +18,7 @@ import Button from "@components/atoms/Button/Button.tsx";
 import { selectLanguage } from "@redux/intl/intlSlice.ts";
 import BurgerButton from "@components/atoms/BurgerButton/BurgerButton.tsx";
 import { selectOptions } from "@utils/selectTranslationValues.ts";
+import { toggleVerticalMenu } from "@redux/menu/menuSlice.ts";
 
 export interface NavbarProps extends WrappedComponentProps {
     handleLogout: () => void;
@@ -30,15 +31,20 @@ export interface NavbarProps extends WrappedComponentProps {
 const Navbar: FC<NavbarProps> = ({
     handleLogout,
     handleLogin,
-    handleShowMenu,
     intl,
     user,
     isAuthenticated,
 }) => {
     const intlState = useSelector((state: RootState) => state.intl);
-    const menuState = useSelector((state: RootState) => state.menu);
+    const menuState = useSelector(
+        (state: RootState) => state.menu.showVerticalMenu,
+    );
 
     const dispatch = useDispatch();
+
+    const handleShowMenu = () => {
+        dispatch(toggleVerticalMenu(!menuState));
+    };
 
     return (
         <NavbarStyled role={"navigation"}>
@@ -120,9 +126,9 @@ const Navbar: FC<NavbarProps> = ({
                 }
 
                 <BurgerButton
+                    handleShowMenu={handleShowMenu}
                     hasPopup={true}
                     expanded={menuState.showVerticalMenu}
-                    handleClick={handleShowMenu}
                 />
             </div>
         </NavbarStyled>

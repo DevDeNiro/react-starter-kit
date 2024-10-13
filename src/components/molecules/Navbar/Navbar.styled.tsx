@@ -57,8 +57,8 @@ const NavbarStyled = styled.div`
     }
 
     @media screen and (max-width: 1100px) {
-        display: flex;
-        flex-direction: row;
+        //display: flex;
+        //flex-direction: row;
         font-size: 0.75rem;
 
         .left-container {

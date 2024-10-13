@@ -6,10 +6,10 @@ import {
 } from "react-intl";
 import { User } from "oidc-client-ts";
 import { ChangeEvent, FC, useRef } from "react";
-import { RootState } from "@redux/store.ts";
 import { useDispatch, useSelector } from "react-redux";
 
 // Local imports
+import { RootState } from "@redux/store.ts";
 import Select from "@components/atoms/Select/Select.tsx";
 import VerticalMenuStyled from "@components/molecules/VerticalMenu/VerticalMenu.styled.tsx";
 import NavItem from "@components/atoms/NavItem/NavItem.tsx";
@@ -36,8 +36,12 @@ const VerticalMenu: FC<VerticalMenuProps> = ({
     className,
 }) => {
     const verticalMenuRef = useRef<HTMLDivElement>(null);
+
     const intlState = useSelector((state: RootState) => state.intl);
-    const menuState = useSelector((state: RootState) => state.menu);
+    const menuState = useSelector(
+        (state: RootState) => state.menu.showVerticalMenu,
+    );
+
     const dispatch = useDispatch();
 
     return (
@@ -46,17 +50,14 @@ const VerticalMenu: FC<VerticalMenuProps> = ({
                 <FormattedMessage
                     id={"app.header.title"}
                     values={{
-                        userStatus: intl.formatMessage(
-                            {
-                                id: user
-                                    ? "app.header.status.loggedIn"
-                                    : "app.header.status.loggedOut",
-                                defaultMessage: user
-                                    ? "Logged in as {name}"
-                                    : "Logged out",
-                            },
-                            { name: user?.profile.name },
-                        ),
+                        userStatus: intl.formatMessage({
+                            id: user
+                                ? "app.header.status.loggedIn"
+                                : "app.header.status.loggedOut",
+                            defaultMessage: user
+                                ? "Logged in as {name}"
+                                : "Logged out",
+                        }),
                     }}
                 />
 
@@ -72,6 +73,7 @@ const VerticalMenu: FC<VerticalMenuProps> = ({
                         onClick={onMenuItemClick}
                     />
                 )}
+                {/* Add button to Log in and Log out*/}
                 {!user && !isAuthenticated && (
                     <Button
                         hasPopup={true}
@@ -88,6 +90,7 @@ const VerticalMenu: FC<VerticalMenuProps> = ({
                         />
                     </Button>
                 )}
+                {/* Add Button to Log out if auth */}
                 {user && (
                     <Button
                         hasPopup={false}
@@ -113,7 +116,6 @@ const VerticalMenu: FC<VerticalMenuProps> = ({
         </VerticalMenuStyled>
     );
 };
-
 // react-refresh/only-export-components
 const EnhancedVerticalMenu = injectIntl(VerticalMenu);
 export default EnhancedVerticalMenu;
