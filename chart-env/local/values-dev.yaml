@@ -4,13 +4,21 @@ image:
   pullPolicy: Always
 
 service:
-  type: NodePort
+  type: ClusterIP
   port: 80
   targetPort: 80
-  nodePort: 30080
 
 ingress:
-  enabled: false
+  enabled: true
+  annotations:
+    kubernetes.io/ingress.class: traefik
+  hosts:
+    - host: react-starter-kit.local
+#   - host: react-starter-kit.127.0.0.1.nip.io
+      paths:
+        - path: /
+          pathType: Prefix
+  tls: []
 
 resources:
   limits:

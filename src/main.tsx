@@ -10,11 +10,11 @@ import Wrapper from "@components/Wrapper.tsx";
 import { store } from "@redux/store.ts";
 
 createRoot(document.getElementById("root")!).render(
-    <React.StrictMode>
-        <Provider store={store}>
-            <Wrapper>
-                <App />
-            </Wrapper>
-        </Provider>
-    </React.StrictMode>,
+  <React.StrictMode>
+    <Provider store={store}>
+      <Wrapper>
+        <App />
+      </Wrapper>
+    </Provider>
+  </React.StrictMode>,
 );

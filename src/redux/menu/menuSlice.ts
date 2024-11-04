@@ -1,21 +1,21 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 interface MenuState {
-    showVerticalMenu: boolean;
+  showVerticalMenu: boolean;
 }
 
 const initialState: MenuState = {
-    showVerticalMenu: false,
+  showVerticalMenu: false,
 };
 
 const menuSlice = createSlice({
-    name: "menu",
-    initialState,
-    reducers: {
-        toggleVerticalMenu(state, action: PayloadAction<boolean>) {
-            state.showVerticalMenu = action.payload;
-        },
+  name: "menu",
+  initialState,
+  reducers: {
+    toggleVerticalMenu(state, action: PayloadAction<boolean>) {
+      state.showVerticalMenu = action.payload;
     },
+  },
 });
 
 export const { toggleVerticalMenu } = menuSlice.actions;

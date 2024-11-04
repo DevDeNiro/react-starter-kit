@@ -10,26 +10,26 @@ import Login from "@pages/Login/Login.tsx";
 import Profile from "@pages/Profile/Profile.tsx";
 
 function App() {
-    const auth = useAuth();
+  const auth = useAuth();
 
-    const router = createBrowserRouter([
-        {
-            path: "/",
-            element: <MainLayout />,
-            errorElement: <Error />,
-            children: [
-                { path: "/", element: <Home user={auth.user} /> },
-                { path: "/profile", element: <Profile user={auth.user} /> },
-                { path: "/auth/oauth2/login", element: <Login auth={auth} /> },
-            ],
-        },
-    ]);
+  const router = createBrowserRouter([
+    {
+      path: "/",
+      element: <MainLayout />,
+      errorElement: <Error />,
+      children: [
+        { path: "/", element: <Home user={auth.user} /> },
+        { path: "/profile", element: <Profile user={auth.user} /> },
+        { path: "/auth/oauth2/login", element: <Login auth={auth} /> },
+      ],
+    },
+  ]);
 
-    return (
-        <div className="App">
-            <RouterProvider router={router} />
-        </div>
-    );
+  return (
+    <div className="App">
+      <RouterProvider router={router} />
+    </div>
+  );
 }
 
 export default App;
