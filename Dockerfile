@@ -22,8 +22,7 @@ RUN pnpm run build
 # Stage 2: Serve the app with Nginx
 FROM nginx:alpine
 
-# Copy Nginx configuration
-COPY docker-resources/nginx.conf /etc/nginx/nginx.conf
+# Copy Nginx conf
 COPY docker-resources/nginx-server.conf /etc/nginx/conf.d/default.conf
 
 # Remove default Nginx website files
@@ -31,9 +30,8 @@ RUN rm -rf /usr/share/nginx/html/*
 
 # Copy built files from the previous stage
 COPY --from=build /app/dist /usr/share/nginx/html
-
-# Expose port 8080 (if needed based on your Nginx configuration)
-EXPOSE 8080
+# Expose port 80 (standard pour Nginx)
+EXPOSE 80
 
 # Start Nginx in the foreground
 CMD ["nginx", "-g", "daemon off;"]

@@ -1,27 +1,21 @@
-# global:
-image:
-  repository: "noodlesboop/react-starter-kit"
-  tag: "latest"
-  pullPolicy: IfNotPresent
+replicaCount: 1
 
-service:
-  type: NodePort
-  port: 80
-  targetPort: 80
-  nodePort: 30080
+frontend:
+  image:
+    registry: docker.io
+    repository: noodlesboop/react-starter-kit
+    tag: latest
+    pullPolicy: IfNotPresent
+  service:
+    type: NodePort
+    port: 80
+    targetPort:
+      http: 80
+      https: 443
+    nodePorts:
+      http: 30080
+      https: 30443
+  ingress:
+    enabled: false
 
-ingress:
-  enabled: true
-  annotations:
-    kubernetes.io/ingress.class: nginx
-    nginx.ingress.kubernetes.io/force-ssl-redirect: "false"
-    nginx.ingress.kubernetes.io/ssl-passthrough: "false"
-  hosts:
-    - host: chart-example.local
-      paths:
-        - path: /
-          pathType: ImplementationSpecific
-  tls:
-    - secretName: chart-example-tls
-      hosts:
-        - chart-example.local
+resources: {}

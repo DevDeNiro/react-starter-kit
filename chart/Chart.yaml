@@ -1,9 +1,9 @@
 apiVersion: v2
-name: hello-world-react
-description: Simple starter project for Nginx / React (Hello World)
+name: react-starter-kit
+description: Starter kit for React application
 type: application
-version: 0.0.0
-appVersion: 0.0.0
+version: 0.1.0
+appVersion: 1.0.0
 
 dependencies:
   - name: nginx
