@@ -1,146 +1,105 @@
-// Interface pour une image
-interface IImage {
-    image_id: string;
-    url: string;
-    alt_text: string;
-}
-
-// Interface pour les variantes du produit
-interface IVariant {
-    variant_id: string;
-    sku: string;
-    price_value: number;
-    currency_code: string;
-    depth: number;
-    width: number;
-    height: number;
-    size_unit: string;
-    weight_value: number;
-    color_name: string;
-    other_attributes: Record<string, string>; // Infère dynamiquement les clés
-    images: IImage[];
-}
-
-// Interface pour un produit
-interface IProduct {
-    id: string;
-    name: string;
-    description: string;
-    brand: string;
-    thumbnail_url: string;
-    variants: IVariant[];
-}
-
-// Interface pour la réponse API (tableau de produits)
-interface IProductResponse {
-    product: IProduct[];
-}
-
-// Interface pour l'objet enrichi retourné par enrichMapWithDetails()
-interface IEnrichedProduct {
-    product: {
-        id: string;
-        name: string;
-        description: string;
-        brand: string;
-        thumbnail_url: string;
-    };
-    variant: {
-        variant_id: string;
-        sku: string;
-        price: string;
-        dimensions: string;
-        weight: string;
-        color: string;
-        images: IImage[];
-        dynamicAttributes: [string, string][]; // Tableau de tuples [clé, valeur]
-    } | null;
-}
+import { useParams } from "react-router-dom";
+import { useState } from "react";
+import { useGetProductDetailsQuery } from "@redux/exSlice.ts";
+import {
+    ProductDetailWrapper,
+    ProductImageWrapper,
+    VariantSelector,
+    ColorButton,
+    VariantDetails,
+} from "./ProductStyledComponents"; // Import des Styled Components
 
 const ProductDetailPage = () => {
     const { id } = useParams<{ id: string }>();
-    const { data, error, isLoading } = useGetProductQuery(id!);
+    const { data, error, isLoading } = useGetProductDetailsQuery(id!);
+
+    const [selectedColor, setSelectedColor] = useState<string | null>(null);
 
     if (isLoading) return <p>Chargement...</p>;
     if (error || !data || !Array.isArray(data.product)) return <p>Erreur lors du chargement</p>;
 
-    const enrichedProduct = enrichMapWithDetails(); // Récupère l'objet enrichi
+    const product = data.product[0]; // Supposons qu'un seul produit est retourné
 
-    if (!enrichedProduct) return <p>Produit non trouvé</p>;
+    // Récupérer toutes les variantes disponibles
+    const variants = product.variants || [];
+
+    // Extraire les couleurs uniques pour affichage dans les boutons
+    const uniqueColors = Array.from(new Set(variants.map(v => v.color_name)));
+
+    // Trouver la variante sélectionnée en fonction de la couleur choisie
+    const selectedVariant = variants.find(v => v.color_name === selectedColor) || variants[0];
 
     return (
         <ProductDetailWrapper>
-            {/* Image */}
+            {/* Image de la variante sélectionnée */}
             <ProductImageWrapper>
-                <img src={enrichedProduct.product.thumbnail_url} alt={enrichedProduct.product.name} />
+                <img
+                    src={selectedVariant?.images[0]?.url || product.thumbnail_url}
+                    alt={selectedVariant?.color_name || product.name}
+                />
             </ProductImageWrapper>
 
-            {/* Détails du produit */}
-            <h2>{enrichedProduct.product.name}</h2>
-            <p>{enrichedProduct.product.description}</p>
-            <p>Marque: {enrichedProduct.product.brand}</p>
+            {/* Sélecteur de couleur */}
+            <VariantSelector>
+                {uniqueColors.map((color) => (
+                    <ColorButton
+                        key={color}
+                        isSelected={color === selectedColor}
+                        onClick={() => setSelectedColor(color)}
+                    >
+                        {color}
+                    </ColorButton>
+                ))}
+            </VariantSelector>
 
-            {/* Détails de la variante */}
-            {enrichedProduct.variant && (
-                <VariantDetails>
-                    <h3>Variante - {enrichedProduct.variant.color}</h3>
-                    <p>SKU: {enrichedProduct.variant.sku}</p>
-                    <p>Prix: {enrichedProduct.variant.price}</p>
-                    <p>Dimensions: {enrichedProduct.variant.dimensions}</p>
-                    <p>Poids: {enrichedProduct.variant.weight}</p>
-
-                    {/* Affichage dynamique des autres attributs */}
-                    <h4>Caractéristiques supplémentaires :</h4>
-                    <ul>
-                        {enrichedProduct.variant.dynamicAttributes.map(([key, value]) => (
-                            <li key={key}><strong>{key}:</strong> {value}</li>
-                        ))}
-                    </ul>
-
-                    {/* Image de la variante */}
-                    {enrichedProduct.variant.images.length > 0 && (
-                        <img src={enrichedProduct.variant.images[0].url} alt="Variante" className="w-48 h-48 object-cover mt-4" />
-                    )}
-                </VariantDetails>
-            )}
+            {/* Détails de la variante sélectionnée */}
+            <VariantDetails>
+                <h2>{product.name} - {selectedVariant.color_name}</h2>
+                <p><strong>Prix:</strong> {selectedVariant.price_value} {selectedVariant.currency_code}</p>
+                <p><strong>Stockage:</strong> {selectedVariant.other_attributes.storage}</p>
+                <p><strong>Batterie:</strong> {selectedVariant.other_attributes.battery}</p>
+                <p><strong>RAM:</strong> {selectedVariant.other_attributes.ram}</p>
+                <p><strong>Dimensions:</strong> {selectedVariant.width} x {selectedVariant.height} x {selectedVariant.depth} {selectedVariant.size_unit}</p>
+                <p><strong>Poids:</strong> {selectedVariant.weight_value} kg</p>
+            </VariantDetails>
         </ProductDetailWrapper>
     );
 };
 
-const enrichMapWithDetails = () => {
-    if (!products) return null;
+export default ProductDetailPage;
 
-    // Trouver le produit correspondant
-    const product = products.find((p) => p.id === id);
-    if (!product) return null;
 
-    // Sélection de la première variante par défaut
-    const variant = product.variants?.[0] || null;
+import styled from "styled-components";
 
-    // Vérifier si la variante a des attributs dynamiques
-    const dynamicAttributes = variant?.other_attributes
-        ? Object.entries(variant.other_attributes) // Convertir en tableau de paires [clé, valeur]
-        : [];
+// Conteneur des boutons de sélection de couleur
+export const VariantSelector = styled.div`
+  display: flex;
+  gap: 10px;
+  margin-top: 15px;
+  align-items: center;
+`;
 
-    return {
-        product: {
-            id: product.id,
-            name: product.name,
-            description: product.description,
-            brand: product.brand,
-            thumbnail_url: product.thumbnail_url,
-        },
-        variant: variant
-            ? {
-                variant_id: variant.variant_id,
-                sku: variant.sku,
-                price: `${variant.price_value} ${variant.currency_code}`,
-                dimensions: `${variant.width}x${variant.height}x${variant.depth} ${variant.size_unit}`,
-                weight: `${variant.weight_value} kg`,
-                color: variant.color_name,
-                images: variant.images,
-                dynamicAttributes, // Tableau des attributs dynamiques
-            }
-            : null,
-    };
-};
+// Bouton pour sélectionner une couleur
+export const ColorButton = styled.button<{ isSelected: boolean }>`
+  padding: 10px 15px;
+  border: none;
+  border-radius: 50px;
+  cursor: pointer;
+  background-color: ${(props) => (props.isSelected ? "#3498db" : "#ecf0f1")};
+  color: ${(props) => (props.isSelected ? "#fff" : "#000")};
+  font-weight: bold;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+  box-shadow: ${(props) =>
+    props.isSelected ? "0px 4px 10px rgba(0, 0, 0, 0.2)" : "none"};
+
+  &:hover {
+    background-color: #3498db;
+    color: white;
+    transform: scale(1.1);
+  }
+
+  &:focus {
+    outline: none;
+    border: 2px solid #2980b9;
+  }
+`;
