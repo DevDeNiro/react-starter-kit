@@ -90,38 +90,102 @@ const enrichMapWithDetails = () => {
 - - -
 
 
-import { useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { setSelectedVariant } from "../slices/variantSlice";
-import { RootState } from "../store";
-import { IProduct, IVariant } from "../types";
+import { useState, useEffect, useMemo } from "react";
+import { useParams } from "react-router-dom";
+import { useGetProductQuery } from "../services/api";
+import ColorSelector from "./ColorSelector";
+import VariantDetails from "./VariantDetails";
+import enrichMapWithDetails from "../utils/enrichMapWithDetails"; // Import utils
 
-const useProductVariant = (product: IProduct | null) => {
-    const dispatch = useDispatch();
-    const selectedVariant = useSelector((state: RootState) => state.variant.selectedVariant);
+const ProductDetailPage = () => {
+    const { id } = useParams<{ id: string }>();
+    const { data, error, isLoading } = useGetProductQuery(id!);
 
-    useEffect(() => {
-        if (product && !selectedVariant) {
-            dispatch(setSelectedVariant(product.variants?.[0] || null)); // Sélection initiale
-        }
-    }, [product, dispatch, selectedVariant]);
+    if (isLoading) return <p>Chargement...</p>;
+    if (error || !data || !Array.isArray(data.product)) return <p>Erreur lors du chargement</p>;
 
-    const selectVariant = (color: string) => {
-        if (product) {
-            const newVariant = product.variants.find(v => v.color_name === color);
-            if (newVariant) {
-                dispatch(setSelectedVariant(newVariant));
-            }
+    const product = data.product.find((p) => p.id === id);
+    if (!product) return <p>Produit non trouvé</p>;
+
+    // État local pour gérer la variante sélectionnée
+    const [selectedVariant, setSelectedVariant] = useState(product.variants?.[0] || null);
+
+    // Fonction pour changer de variante
+    const handleVariantChange = (color: string) => {
+        const newVariant = product.variants.find(v => v.color_name === color);
+        if (newVariant) {
+            setSelectedVariant(newVariant);
         }
     };
 
-    return { selectedVariant, selectVariant };
+    // Mémorisation de l'objet enrichi pour éviter des re-calculs inutiles
+    const enrichedProduct = useMemo(() => enrichMapWithDetails(product, selectedVariant), [product, selectedVariant]);
+
+    if (!enrichedProduct) return <p>Produit non trouvé</p>;
+
+    return (
+        <ProductDetailWrapper>
+            {/* Image principale */}
+            <ProductImageWrapper>
+                <img src={enrichedProduct.product.thumbnail_url} alt={enrichedProduct.product.name} />
+            </ProductImageWrapper>
+
+            {/* Infos produit */}
+            <h2>{enrichedProduct.product.name}</h2>
+            <p>{enrichedProduct.product.description}</p>
+            <p>Marque: {enrichedProduct.product.brand}</p>
+
+            {/* Sélecteur de couleur */}
+            <ColorSelector
+                variants={product.variants}
+                selectedVariant={selectedVariant}
+                onSelect={handleVariantChange}
+            />
+
+            {/* Détails de la variante */}
+            <VariantDetails variant={selectedVariant} />
+        </ProductDetailWrapper>
+    );
 };
 
-export default useProductVariant;
+export default ProductDetailPage;
 
 
-const ColorSelector = ({variants, selectedVariant, onSelect}: {
+import { IProduct, IVariant } from "../types";
+
+const enrichMapWithDetails = (product: IProduct, variant: IVariant | null) => {
+    if (!product) return null;
+
+    const dynamicAttributes = variant?.other_attributes
+        ? Object.entries(variant.other_attributes)
+        : [];
+
+    return {
+        product: {
+            id: product.id,
+            name: product.name,
+            description: product.description,
+            brand: product.brand,
+            thumbnail_url: product.thumbnail_url,
+        },
+        variant: variant
+            ? {
+                variant_id: variant.variant_id,
+                sku: variant.sku,
+                price: `${variant.price_value} ${variant.currency_code}`,
+                dimensions: `${variant.width}x${variant.height}x${variant.depth} ${variant.size_unit}`,
+                weight: `${variant.weight_value} kg`,
+                color: variant.color_name,
+                images: variant.images,
+                dynamicAttributes, // Tableau des attributs dynamiques
+            }
+            : null,
+    };
+};
+
+export default enrichMapWithDetails;
+
+const ColorSelector = ({ variants, selectedVariant, onSelect }: {
     variants: IVariant[],
     selectedVariant: IVariant | null,
     onSelect: (color: string) => void
@@ -134,7 +198,7 @@ const ColorSelector = ({variants, selectedVariant, onSelect}: {
                     <button
                         key={variant.variant_id}
                         className={`color-btn ${selectedVariant?.color_name === variant.color_name ? 'selected' : ''}`}
-                        style={{backgroundColor: variant.color_name.toLowerCase()}}
+                        style={{ backgroundColor: variant.color_name.toLowerCase() }}
                         onClick={() => onSelect(variant.color_name)}
                     >
                         {variant.color_name}
@@ -144,6 +208,8 @@ const ColorSelector = ({variants, selectedVariant, onSelect}: {
         </div>
     );
 };
+
+export default ColorSelector;
 
 const VariantDetails = ({ variant }: { variant: IVariant | null }) => {
     if (!variant) return <p>Aucune variante disponible</p>;
@@ -176,55 +242,7 @@ const VariantDetails = ({ variant }: { variant: IVariant | null }) => {
     );
 };
 
-
-import { useParams } from "react-router-dom";
-import { useGetProductQuery } from "../services/api";
-import useProductVariant from "../hooks/useProductVariant"; // Import du hook
-import ColorSelector from "./ColorSelector";
-import VariantDetails from "./VariantDetails";
-
-const ProductDetailPage = () => {
-    const { id } = useParams<{ id: string }>();
-    const { data, error, isLoading } = useGetProductQuery(id!);
-
-    if (isLoading) return <p>Chargement...</p>;
-    if (error || !data || !Array.isArray(data.product)) return <p>Erreur lors du chargement</p>;
-
-    const product = data.product.find((p) => p.id === id);
-    if (!product) return <p>Produit non trouvé</p>;
-
-    const { selectedVariant, selectVariant } = useProductVariant(product);
-    const enrichedProduct = enrichMapWithDetails();
-
-    if (!enrichedProduct) return <p>Produit non trouvé</p>;
-
-    return (
-        <ProductDetailWrapper>
-            {/* Image principale */}
-            <ProductImageWrapper>
-                <img src={enrichedProduct.product.thumbnail_url} alt={enrichedProduct.product.name} />
-            </ProductImageWrapper>
-
-            {/* Infos produit */}
-            <h2>{enrichedProduct.product.name}</h2>
-            <p>{enrichedProduct.product.description}</p>
-            <p>Marque: {enrichedProduct.product.brand}</p>
-
-            {/* Sélection de couleur */}
-            <ColorSelector
-                variants={product.variants}
-                selectedVariant={selectedVariant}
-                onSelect={selectVariant}
-            />
-
-            {/* Détails de la variante */}
-            <VariantDetails variant={selectedVariant} />
-        </ProductDetailWrapper>
-    );
-};
-
-export default ProductDetailPage;
-
+export default VariantDetails;
 
 .color-options {
     display: flex;
@@ -248,94 +266,3 @@ export default ProductDetailPage;
 .color-btn.selected {
     border: 3px solid black;
 }
-
-import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { IVariant } from "../types"; // Assure-toi que l'import de IVariant est correct
-
-interface VariantState {
-    selectedVariant: IVariant | null;
-}
-
-const initialState: VariantState = {
-    selectedVariant: null,
-};
-
-export const variantSlice = createSlice({
-    name: "variant",
-    initialState,
-    reducers: {
-        setSelectedVariant: (state, action: PayloadAction<IVariant | null>) => {
-            state.selectedVariant = action.payload;
-        },
-    },
-});
-
-export const { setSelectedVariant } = variantSlice.actions;
-export default variantSlice.reducer;
-
-import { useSelector } from "react-redux";
-import { RootState } from "../store";
-
-const enrichMapWithDetails = () => {
-    const selectedVariant = useSelector((state: RootState) => state.variant.selectedVariant);
-
-    if (!products) return null;
-
-    // Trouver le produit correspondant
-    const product = products.find((p) => p.id === id);
-    if (!product) return null;
-
-    // Utiliser la variante sélectionnée ou la première
-    const variant = selectedVariant || product.variants?.[0] || null;
-
-    // Vérifier si la variante a des attributs dynamiques
-    const dynamicAttributes = variant?.other_attributes
-        ? Object.entries(variant.other_attributes)
-        : [];
-
-    return {
-        product: {
-            id: product.id,
-            name: product.name,
-            description: product.description,
-            brand: product.brand,
-            thumbnail_url: product.thumbnail_url,
-        },
-        variant: variant
-            ? {
-                variant_id: variant.variant_id,
-                sku: variant.sku,
-                price: `${variant.price_value} ${variant.currency_code}`,
-                dimensions: `${variant.width}x${variant.height}x${variant.depth} ${variant.size_unit}`,
-                weight: `${variant.weight_value} kg`,
-                color: variant.color_name,
-                images: variant.images,
-                dynamicAttributes, // Tableau des attributs dynamiques
-            }
-            : null,
-    };
-};
-
-
-
-import { useState, useEffect } from "react";
-
-const useProductVariant = (product: IProduct | null) => {
-    const [variant, setVariant] = useState<IVariant | null>(product?.variants?.[0] || null);
-
-    useEffect(() => {
-        selectedVariant = variant; // Met à jour la variable globale
-        enrichMapWithDetails(); // Rafraîchit les données enrichies
-    }, [variant]);
-
-    const selectVariant = (color: string) => {
-        if (product) {
-            const newVariant = product.variants.find(v => v.color_name === color);
-            if (newVariant) {
-                setVariant(newVariant);
-            }
-        }
-    };
-
-    return { selectedVariant: variant, selectVariant };
-};
