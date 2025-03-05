@@ -1,6 +1,6 @@
 import {useLocation, useParams} from "react-router-dom";
 import {useDispatch} from "react-redux";
-import {useGetProductQuery, useGetProductsQuery} from "@redux/exSlice.ts";
+import {useGetProductQuery, useGetProductsQuery} from "@redux/exSlice.tsx";
 import {useState} from "react";
 import {
     ColorButton,

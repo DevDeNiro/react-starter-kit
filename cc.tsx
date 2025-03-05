@@ -1,6 +1,6 @@
 import { useParams } from "react-router-dom";
 import { useState } from "react";
-import { useGetProductDetailsQuery } from "@redux/exSlice.ts";
+import { useGetProductDetailsQuery } from "./src/redux/exSlice.tsx";
 import {
     ProductDetailWrapper,
     ProductImageWrapper,

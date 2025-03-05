@@ -1,0 +1,142 @@
+[
+    {
+        "id": "9722",
+        "name": "iPhone 15 Pro",
+        "description": "Le dernier iPhone avec technologie avanc\u00e9e.",
+        "brand": "Apple",
+        "category": "Smartphones",
+        "thumbnail_url": "https://via.placeholder.com/150",
+        "variants": [
+            {
+                "variant_id": "1316",
+                "sku": "IPH15P-128GB-BLACK",
+                "price_value": 1299.99,
+                "currency_code": "EUR",
+                "color_name": "Noir",
+                "other_attributes": {
+                    "storage": "128GB",
+                    "battery": "4352mAh",
+                    "ram": "8GB"
+                },
+                "images": [
+                    {
+                        "url": "https://via.placeholder.com/150",
+                        "alt_text": "iPhone Noir"
+                    }
+                ]
+            },
+            {
+                "variant_id": "9223",
+                "sku": "IPH15P-256GB-BLUE",
+                "price_value": 1399.99,
+                "currency_code": "EUR",
+                "color_name": "Bleu",
+                "other_attributes": {
+                    "storage": "256GB",
+                    "battery": "4352mAh",
+                    "ram": "8GB"
+                },
+                "images": [
+                    {
+                        "url": "https://via.placeholder.com/150",
+                        "alt_text": "iPhone Bleu"
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "id": "1738",
+        "name": "MacBook Pro 14",
+        "description": "Puissant avec une puce Apple M2 Pro et un \u00e9cran Retina.",
+        "brand": "Apple",
+        "category": "Ordinateurs portables",
+        "thumbnail_url": "https://via.placeholder.com/150",
+        "variants": [
+            {
+                "variant_id": "6548",
+                "sku": "MBP14-M2-16GB-512GB",
+                "price_value": 2399.99,
+                "currency_code": "EUR",
+                "color_name": "Gris sid\u00e9ral",
+                "other_attributes": {
+                    "cpu": "Apple M2 Pro",
+                    "ram": "16GB",
+                    "storage": "512GB SSD",
+                    "screen_size": "14 pouces"
+                },
+                "images": [
+                    {
+                        "url": "https://via.placeholder.com/150",
+                        "alt_text": "MacBook Pro Gris"
+                    }
+                ]
+            },
+            {
+                "variant_id": "7762",
+                "sku": "MBP14-M2-32GB-1TB",
+                "price_value": 2999.99,
+                "currency_code": "EUR",
+                "color_name": "Argent",
+                "other_attributes": {
+                    "cpu": "Apple M2 Max",
+                    "ram": "32GB",
+                    "storage": "1TB SSD",
+                    "screen_size": "14 pouces"
+                },
+                "images": [
+                    {
+                        "url": "https://via.placeholder.com/150",
+                        "alt_text": "MacBook Pro Argent"
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "id": "2966",
+        "name": "Samsung Galaxy Tab S9",
+        "description": "Tablette premium avec un \u00e9cran AMOLED et compatibilit\u00e9 S Pen.",
+        "brand": "Samsung",
+        "category": "Tablettes",
+        "thumbnail_url": "https://via.placeholder.com/150",
+        "variants": [
+            {
+                "variant_id": "3554",
+                "sku": "SGT-S9-128GB-WIFI",
+                "price_value": 899.99,
+                "currency_code": "EUR",
+                "color_name": "Gris",
+                "other_attributes": {
+                    "storage": "128GB",
+                    "screen_size": "11 pouces",
+                    "connectivity": "Wi-Fi"
+                },
+                "images": [
+                    {
+                        "url": "https://via.placeholder.com/150",
+                        "alt_text": "Galaxy Tab Gris"
+                    }
+                ]
+            },
+            {
+                "variant_id": "5076",
+                "sku": "SGT-S9-256GB-CELLULAR",
+                "price_value": 1099.99,
+                "currency_code": "EUR",
+                "color_name": "Noir",
+                "other_attributes": {
+                    "storage": "256GB",
+                    "screen_size": "11 pouces",
+                    "connectivity": "4G LTE"
+                },
+                "images": [
+                    {
+                        "url": "https://via.placeholder.com/150",
+                        "alt_text": "Galaxy Tab Noir"
+                    }
+                ]
+            }
+        ]
+    }
+]
