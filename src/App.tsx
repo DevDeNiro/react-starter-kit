@@ -2,7 +2,7 @@
 import { useAuth } from "react-oidc-context";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 // Local imports
-import "./App.css";
+import "./globals.css";
 import Home from "@components/pages/Home/Home.tsx";
 import Error from "@pages/Error/Error.tsx";
 import MainLayout from "@organisms/MainLayout.tsx";
