@@ -58,17 +58,11 @@ export const exempleApi = createApi({
         getProducts: builder.query<IProductResponse, void>({
             query: () => `products`
         }),
-        searchProducts: builder.mutation<IProductResponse, { search?: string; brand?: string }>({
+        searchProducts: builder.mutation<IProductResponse, { search?: string}>({
             query: ({ search, brand }) => ({
                 url: `products/search`,
                 method: "POST",
-                body: {
-                    filters: [
-                        search ? { name: "name", type: "TEXT", value: search } : null,
-                        brand ? { name: "brand", type: "TEXT", value: brand } : null
-                    ].filter(Boolean), // Supprime les valeurs null
-                    pagination: { size: 10, page: 0, sort: "name", direction: "asc" }
-                }
+
             })
         })
     })
@@ -103,9 +97,8 @@ const HomeTemplate = () => {
 
     return (
         <>
-            <SearchBar onSearch={handleSearch} />
-            <FilterSection brands={availableBrands} onFilter={handleFilter} />
-            <ProductSection products={displayedProducts} />
+            <FilterSection />
+            <ProductSection products={productData} />
         </>
     );
 };
@@ -129,19 +122,45 @@ const SearchBar: FC<{ onSearch: (value: string) => void }> = ({ onSearch }) => {
     );
 };
 
-const FilterSection: FC<{ brands: string[]; onFilter: (brand: string | null) => void }> = ({ brands, onFilter }) => {
+const FilterSection: FC = () => {
     return (
         <div>
-            <h3>Filtres</h3>
-            {brands.map((brand) => (
-                <button key={brand} onClick={() => onFilter(brand)}>
-                    {brand}
-                </button>
-            ))}
-            <button onClick={() => onFilter(null)}>Réinitialiser</button>
+            <FilterGroup title="Marque" options={["Marque 1","Marque 2" ]}> />
         </div>
     );
 };
+
+    interface FilterGroupProps {
+            title: string;
+            options: string[];
+}
+const FilterGroup: FC<FilterGroupProps> = ({title, options}) => {
+    return (
+        <div>
+        <ul>
+    {options.map((option, index) => (
+        <li key={index}>
+        <Checkbox label={option}
+    </li>
+        )}
+    </ul>
+    </div>
+        )
+}
+
+interface checkoxProps {
+            label: string;
+            checked?: boolean:
+}
+
+const Checkbox: React.FC<checkoxProps> = ({label}) => {
+    return (
+        <label>
+        <input type="checkbox" checked={label} />
+    {label}
+        </label>
+        )
+    }
 
 const PaginationControls: FC<{ page: number; totalPages: number; onPageChange: (page: number) => void }> = ({ page, totalPages, onPageChange }) => {
     return (
@@ -156,3 +175,31 @@ const PaginationControls: FC<{ page: number; totalPages: number; onPageChange: (
         </div>
     );
 };
+
+// Chacune de ces opération est porté par l'ID du client.
+
+POST /items
+
+{
+    "product_sku": string,
+    "quantity": number,
+    "unit_price": number
+}
+
+POST {cartId}/checkout
+[
+    {
+        "product_sku": string,
+        "quantity": number,
+        "unit_price": number
+    }
+]
+
+POST migrate-cart
+[
+    {
+        "product_sku": string,
+        "quantity": number,
+        "unit_price": number
+    }
+]

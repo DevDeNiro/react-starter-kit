@@ -10,24 +10,27 @@ import ProductImageWrapper from "./ProductImageWrapper"; // Import du composant
 export const exempleApi = createApi({
     reducerPath: "exempleApi",
     baseQuery: fetchBaseQuery({
-        baseUrl: "https://ma-ressource-externe/products-svc/api/"
+        baseUrl: "https://ma-ressource-externe/catalog-svc/api/products"
     }),
     endpoints: (builder) => ({
         getProduct: builder.query<IProductResponse[], void>({
-            query: () => `products`
+            query: () => `/`
+        })
+        getOneProduct: builder.query(IProduct, string)({
+            query: (id) => `/${id}`
         })
     })
 })
 
-export const {useGetProductsQuery} = catalogApi;
+export const {useGetProductsQuery, useGetOneProductsQuery} = catalogApi;
 
+// Réponse reçu
 export interface IProductResponse {
     data: IProduct[],
     current_page: number,
     size: number,
     total_elements: number,
     total_pages: number
-
 }
 
 export interface IProduct {
@@ -68,16 +71,12 @@ type IImage = {
 }
 
 const HomeTemplate = () => {
-
     const {data, error, isLoading} = useGetProductQuery();
-
-    // Op on error & loading
 
     return (
         <FilterSection/>
-        <ProductSection products={data}></ProductSection>
-    )
-
+    <ProductSection products={data}></ProductSection>
+)
 }
 
 type ProductSectionProps = {
@@ -87,56 +86,21 @@ type ProductSectionProps = {
 const ProductSection: FC<ProductSectionProps> = ({products}) => {
     return (
         <SearchBarWrapper>
-            <SearchBar onSearch={handleSearch} />
+            <SearchBar onSearch={handleSearch}/>
         </SearchBarWrapper>
-        <ProductCardWrapper>
-            {Array.isArray(products) ? products?.map((p) =>
-                <Link to={`/products/${p.id}`}
-                      key={p.id}
-                      state={{products}}
-                >
-                    <ProductCard
-                        products={{...p}}
-                        /ProductCard>
-                </Link>
-                ) : "Is not a array"}
-        </ProductCardWrapper>
-    )
-
-
-    const fakeProduct = {
-        "id": "123",
-        "name": "Galaxy S99",
-        "description": "a desc",
-        "brand": "Samsung",
-        "thumbnail_url": "picsum",
-        "variants": [
-            {
-                "variant_id": "123",
-                "sku": "123_SKU",
-                "price_value": 999.12,
-                "currency_code": "EUR",
-                "depth": 0.80,
-                "width": 12,
-                "height": 14.0,
-                "size_unit": "cm",
-                "weight_value": 0.18,
-                "color_name": "BLACK",
-                "other_attributes": {
-                    "storage": "123GB",
-                    "battery": "4000mAh",
-                    "ram": "8GB"
-                },
-                "images": [
-                    {
-                        "image_id": "123",
-                        "url": "picsum",
-                        "alt_text": "AZERTY"
-                    }
-                ]
-            }
-        ]
-    }
+    <ProductCardWrapper>
+        {Array.isArray(products) ? products?.map((p) =>
+            <Link to={`/products/${p.id}`}
+                  key={p.id}
+                  state={{products}}
+            >
+                <ProductCard
+                    products={{...p}}
+                    /ProductCard>
+            </Link>
+            ) : "Is not a array"}
+    </ProductCardWrapper>
+)
 
 
     const enrichMapWithDetails = (product: IProduct, variant: IVariant | null) => {
@@ -197,52 +161,22 @@ const ProductSection: FC<ProductSectionProps> = ({products}) => {
 
     export default ColorSelector;
 
-    const VariantDetails = ({variant}: { variant: IVariant | null }) => {
-        if (!variant) return <p>Aucune variante disponible</p>;
-
-        return (
-            <div className="variant-details">
-                <h3>Variante - {variant.color_name}</h3>
-                <p>SKU: {variant.sku}</p>
-                <p>Prix: {variant.price_value} {variant.currency_code}</p>
-                <p>Dimensions: {variant.width}x{variant.height}x{variant.depth} {variant.size_unit}</p>
-                <p>Poids: {variant.weight_value} kg</p>
-
-                {/* Affichage dynamique des autres attributs */}
-                {variant.other_attributes && (
-                    <div>
-                        <h4>Caractéristiques supplémentaires :</h4>
-                        <ul>
-                            {Object.entries(variant.other_attributes).map(([key, value]) => (
-                                <li key={key}><strong>{key}:</strong> {value}</li>
-                            ))}
-                        </ul>
-                    </div>
-                )}
-
-                {/* Image de la variante */}
-                {variant.images.length > 0 && (
-                    <img src={variant.images[0].url} alt="Variante" className="w-48 h-48 object-cover mt-4"/>
-                )}
-            </div>
-        );
-    };
-
-    export default VariantDetails;
-
 
     const ProductDetailPage = () => {
         const {id} = useParams<{ id: string }>();
         const {data, error, isLoading} = useGetProductQuery(id!);
 
+        const dispatch = useDispatch();
+
         if (isLoading) return <p>Chargement...</p>;
         if (error || !data || !Array.isArray(data.product)) return <p>Erreur lors du chargement</p>;
 
-        const product = data.product.find((p) => p.id === id);
-        if (!product) return <p>Produit non trouvé</p>;
-
         // État local pour gérer la variante sélectionnée
-        const [selectedVariant, setSelectedVariant] = useState(product.variants?.[0] || null);
+        const [selectedVariant, setSelectedVariant] = useState
+        (data.variants?.[0] || null);
+
+        // Mémorisation de l'objet enrichi pour éviter des recalculs inutiles
+        const enrichedProduct = useMemo(() => enrichMapWithDetails(data, selectedVariant), [data, selectedVariant]);
 
         // État pour gérer l’image principale affichée
         const [selectedImage, setSelectedImage] = useState<string>(
@@ -251,15 +185,17 @@ const ProductSection: FC<ProductSectionProps> = ({products}) => {
 
         // Fonction pour changer de variante et mettre à jour l’image
         const handleVariantChange = (color: string) => {
-            const newVariant = product.variants.find(v => v.color_name === color);
+            if (Array.isArray(data?.variants)) {
+
+            const newVariant = data.variants.find(v => v.color_name === color);
             if (newVariant) {
                 setSelectedVariant(newVariant);
-                setSelectedImage(newVariant.images?.[0]?.url || product.thumbnail_url); // Prend la première image de la variante
+                setSelectedImage(newVariant.images?.[0]?.url || data.thumbnail_url);
+            }
+        } else {
+                console.log("Is not a array");
             }
         };
-
-        // Mémorisation de l'objet enrichi pour éviter des recalculs inutiles
-        const enrichedProduct = useMemo(() => enrichMapWithDetails(product, selectedVariant), [product, selectedVariant]);
 
         if (!enrichedProduct) return <p>Produit non trouvé</p>;
 
@@ -273,13 +209,13 @@ const ProductSection: FC<ProductSectionProps> = ({products}) => {
                 />
 
                 {/* Infos produit */}
-                <h2>{enrichedProduct.product.name}</h2>
-                <p>{enrichedProduct.product.description}</p>
-                <p>Marque: {enrichedProduct.product.brand}</p>
+                <h2>{enrichedProduct.data.name}</h2>
+                <p>{enrichedProduct.data.description}</p>
+                <p>Marque: {enrichedProduct.data.brand}</p>
 
                 {/* Sélecteur de couleur */}
                 <ColorSelector
-                    variants={product.variants}
+                    variants={data.variants}
                     selectedVariant={selectedVariant}
                     onSelect={handleVariantChange}
                 />
@@ -289,8 +225,6 @@ const ProductSection: FC<ProductSectionProps> = ({products}) => {
             </ProductDetailWrapper>
         );
     };
-
-    export default ProductDetailPage;
 
 
     interface ProductImageWrapperProps {
