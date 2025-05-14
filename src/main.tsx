@@ -7,7 +7,7 @@ import { Provider } from "react-redux";
 import App from "./App.tsx";
 import "./index.css";
 import Wrapper from "@components/Wrapper.tsx";
-import { store } from "@redux/store.ts";
+import { store } from "@/src/app/store.ts";
 
 createRoot(document.getElementById("root")!).render(
   <React.StrictMode>

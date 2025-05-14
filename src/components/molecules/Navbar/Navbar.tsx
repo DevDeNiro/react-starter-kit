@@ -7,18 +7,18 @@ import {
   injectIntl,
   WrappedComponentProps,
 } from "react-intl";
-import reactLogo from "@assets/react.svg";
+import reactLogo from "@/src/shared/assets/react.svg";
 
 // Intern
-import { RootState } from "@redux/store.ts";
+import { RootState } from "@/src/app/store.ts";
 import Select from "@components/atoms/Select/Select.tsx";
 import NavbarStyled from "@components/molecules/Navbar/Navbar.styled.tsx";
 import NavItem from "@components/atoms/NavItem/NavItem.tsx";
 import Button from "@components/atoms/Button/Button.tsx";
-import { selectLanguage } from "@redux/intl/intlSlice.ts";
+import { selectLanguage } from "@/src/app/slices/intl/intlSlice.ts";
 import BurgerButton from "@components/atoms/BurgerButton/BurgerButton.tsx";
-import { selectOptions } from "@utils/selectTranslationValues.ts";
-import { toggleVerticalMenu } from "@redux/menu/menuSlice.ts";
+import { selectOptions } from "@/src/shared/utils/selectTranslationValues.ts";
+import { toggleVerticalMenu } from "@/src/app/slices/menu/menuSlice.ts";
 
 export interface NavbarProps extends WrappedComponentProps {
   handleLogout: () => void;

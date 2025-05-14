@@ -1,8 +1,8 @@
 import React from "react";
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { MessageFormatElement } from "react-intl";
-import English from "@utils/translations/en-us.json";
-import French from "@utils/translations/fr-fr.json";
+import English from "@/src/shared/utils/translations/en-us.json";
+import French from "@/src/shared/utils/translations/fr-fr.json";
 
 interface intlState {
   locale: string;

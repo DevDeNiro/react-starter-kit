@@ -9,19 +9,8 @@ export default defineConfig({
     resolve: {
         alias: [
             {find: "@", replacement: path.resolve(__dirname, "src")},
-            {find: "@api", replacement: path.resolve(__dirname, "src/api")},
-            {
-                find: "@redux",
-                replacement: path.resolve(__dirname, "src/redux"),
-            },
-            {
-                find: "@utils",
-                replacement: path.resolve(__dirname, "src/utils"),
-            },
-            {
-                find: "@assets",
-                replacement: path.resolve(__dirname, "src/assets"),
-            },
+            {find: "@shared", replacement: path.resolve(__dirname, "src/shared")},
+            {find: "@modules", replacement: path.resolve(__dirname, "src/modules")},
             {
                 find: "@components",
                 replacement: path.resolve(__dirname, "src/components"),
@@ -39,10 +28,6 @@ export default defineConfig({
                 replacement: path.resolve(__dirname, "src/components/organisms"),
             },
             {
-                find: "@templates",
-                replacement: path.resolve(__dirname, "src/components/templates"),
-            },
-            {
                 find: "@pages",
                 replacement: path.resolve(__dirname, "src/components/pages"),
             },
@@ -55,7 +40,7 @@ export default defineConfig({
         https: process.env.NODE_ENV === "dev" && {
             key: "",
             cert: ""
-        }
+        },
         proxy: {
             "/api": {
                 target: "http://localhost:3000",

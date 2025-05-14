@@ -1,8 +1,8 @@
 import { FC, useEffect } from "react";
 import { Outlet } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { RootState } from "@redux/store.ts";
-import { toggleVerticalMenu } from "@redux/menu/menuSlice";
+import { RootState } from "@/src/app/store.ts";
+import { toggleVerticalMenu } from "@/src/app/slices/menu/menuSlice.ts";
 import Navbar from "@molecules/Navbar/Navbar.tsx";
 import VerticalMenu from "@molecules/VerticalMenu/VerticalMenu.tsx";
 import { useAuth } from "react-oidc-context";

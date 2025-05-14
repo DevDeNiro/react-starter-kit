@@ -5,8 +5,8 @@ import { AuthProvider } from "react-oidc-context";
 import React from "react";
 
 // Intern
-import oidcConfig from "@utils/auth/oidcConfig.ts";
-import { RootState } from "../redux/store.ts";
+import oidcConfig from "@/src/shared/utils/auth/oidcConfig.ts";
+import { RootState } from "../app/store.ts";
 
 type WrapperProps = {
   children: React.ReactNode;
