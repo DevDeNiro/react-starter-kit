@@ -1,0 +1,40 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+metadata:
+    name: react-starter-kit
+
+resources:
+    - namespace.yaml
+    - deployment.yaml
+    - service.yaml
+    - ingress.yaml
+
+# Common labels applied to all resources
+labels:
+    -   pairs:
+            app.kubernetes.io/managed-by: kustomize
+            environment: development
+
+# Image configuration
+images:
+    -   name: react-starter-kit
+        newTag: latest
+
+# Namespace to deploy to
+namespace: ns-react-starter-kit
+
+# Optional: Add prefix/suffix to resource names
+# namePrefix: dev-
+# nameSuffix: -v1
+
+# Optional: ConfigMap/Secret generators
+# configMapGenerator:
+# - name: react-starter-kit-config
+#   literals:
+#   - NODE_ENV=production
+#   - API_URL=http://api.local
+
+# Optional: Patches for different environments
+# patchesStrategicMerge:
+# - deployment-patch.yaml

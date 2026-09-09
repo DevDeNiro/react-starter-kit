@@ -1,4 +1,5 @@
 import Button from "@components/atoms/Button/Button.tsx";
+import {fn} from "@storybook/test";
 
 export default {
   component: Button,
@@ -9,13 +10,15 @@ export default {
 export const Default = {
   args: {
     children: "Click me",
-    isLogout: false,
+    handleClick: fn(),
+    logout: false,
   },
 };
 
 export const Logout = {
   args: {
     children: "Logout",
-    isLogout: true,
+    handleClick: fn(),
+    logout: true,
   },
 };

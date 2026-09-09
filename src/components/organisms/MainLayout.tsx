@@ -1,81 +1,81 @@
-import { FC, useEffect } from "react";
-import { Outlet } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
-import { RootState } from "@/src/app/store.ts";
-import { toggleVerticalMenu } from "@/src/app/slices/menu/menuSlice.ts";
+import {FC, useEffect} from "react";
+import {Outlet} from "react-router-dom";
+import {useDispatch, useSelector} from "react-redux";
+import {RootState} from "@/app/store.ts";
+import {toggleVerticalMenu} from "@/app/slices/menu/menuSlice.ts";
 import Navbar from "@molecules/Navbar/Navbar.tsx";
 import VerticalMenu from "@molecules/VerticalMenu/VerticalMenu.tsx";
-import { useAuth } from "react-oidc-context";
+import {useAuth} from "react-oidc-context";
 import styled from "styled-components";
 import VerticalMenuStyled from "@molecules/VerticalMenu/VerticalMenu.styled.tsx";
 
 const StyledPage = styled.div`
-  width: 100%;
+    width: 100%;
 
-  ${VerticalMenuStyled} {
-    position: absolute;
-    top: 4rem;
-    left: 0;
+    ${VerticalMenuStyled} {
+        position: absolute;
+        top: 4rem;
+        left: 0;
 
-    &.hidden {
-      width: 0vw;
+        &.hidden {
+            width: 0vw;
+        }
     }
-  }
 `;
 
 const MainLayout: FC = () => {
-  const auth = useAuth();
-  const dispatch = useDispatch();
-  const menuState = useSelector((state: RootState) => state.menu);
+    const auth = useAuth();
+    const dispatch = useDispatch();
+    const menuState = useSelector((state: RootState) => state.menu);
 
-  function handleLogin() {
-    return auth.signinRedirect();
-  }
-
-  function handleLogout() {
-    return auth.signoutRedirect();
-  }
-
-  useEffect(() => {
-    function handleWindowResize() {
-      const windowWidth = window.innerWidth;
-      if (windowWidth <= 1100) {
-        dispatch(toggleVerticalMenu(false));
-      }
+    function handleLogin() {
+        return auth.signinRedirect();
     }
 
-    window.addEventListener("resize", handleWindowResize);
-    // Cleanup
-    return () => {
-      window.removeEventListener("resize", handleWindowResize);
-    };
-  }, [dispatch]);
+    function handleLogout() {
+        return auth.signoutRedirect();
+    }
 
-  return (
-    <StyledPage>
-      <Navbar
-        handleShowMenu={() =>
-          dispatch(toggleVerticalMenu(!menuState.showVerticalMenu))
+    useEffect(() => {
+        function handleWindowResize() {
+            const windowWidth = window.innerWidth;
+            if (windowWidth <= 1100) {
+                dispatch(toggleVerticalMenu(false));
+            }
         }
-        handleLogin={handleLogin}
-        handleLogout={handleLogout}
-        user={auth.user}
-        isAuthenticated={auth.isLoading}
-      />
 
-      <VerticalMenu
-        onMenuItemClick={() =>
-          dispatch(toggleVerticalMenu(!menuState.showVerticalMenu))
-        }
-        handleLogin={handleLogin}
-        handleLogout={handleLogout}
-        user={auth.user}
-        className={menuState.showVerticalMenu ? "visible" : "hidden"}
-        isAuthenticated={auth.isAuthenticated}
-      />
-      <Outlet />
-    </StyledPage>
-  );
+        window.addEventListener("resize", handleWindowResize);
+        // Cleanup
+        return () => {
+            window.removeEventListener("resize", handleWindowResize);
+        };
+    }, [dispatch]);
+
+    return (
+        <StyledPage>
+            <Navbar
+                handleShowMenu={() =>
+                    dispatch(toggleVerticalMenu(!menuState.showVerticalMenu))
+                }
+                handleLogin={handleLogin}
+                handleLogout={handleLogout}
+                user={auth.user}
+                isAuthenticated={auth.isLoading}
+            />
+
+            <VerticalMenu
+                onMenuItemClick={() =>
+                    dispatch(toggleVerticalMenu(!menuState.showVerticalMenu))
+                }
+                handleLogin={handleLogin}
+                handleLogout={handleLogout}
+                user={auth.user}
+                className={menuState.showVerticalMenu ? "visible" : "hidden"}
+                isAuthenticated={auth.isAuthenticated}
+            />
+            <Outlet/>
+        </StyledPage>
+    );
 };
 
 export default MainLayout;

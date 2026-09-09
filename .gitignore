@@ -4,6 +4,7 @@ dist
 logs
 coverage
 storybook-static/
+*.tsbuildinfo
 .env
 
 # Chart

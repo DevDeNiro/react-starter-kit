@@ -1,0 +1,74 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+    name: react-starter-kit
+    namespace: ns-react-starter-kit
+    labels:
+        app: react-starter-kit
+        app.kubernetes.io/name: react-starter-kit
+        app.kubernetes.io/component: frontend
+        app.kubernetes.io/version: "1.0.0"
+spec:
+    replicas: 2
+    strategy:
+        type: RollingUpdate
+        rollingUpdate:
+            maxUnavailable: 1
+            maxSurge: 1
+    selector:
+        matchLabels:
+            app: react-starter-kit
+    template:
+        metadata:
+            labels:
+                app: react-starter-kit
+                app.kubernetes.io/name: react-starter-kit
+                app.kubernetes.io/component: frontend
+        spec:
+            containers:
+                -   name: react-starter-kit
+                    image: react-starter-kit:latest
+                    imagePullPolicy: Never  # Important for k3d local images
+                    ports:
+                        -   name: http
+                            containerPort: 80
+                            protocol: TCP
+                    resources:
+                        requests:
+                            memory: "64Mi"
+                            cpu: "50m"
+                        limits:
+                            memory: "256Mi"
+                            cpu: "200m"
+                    livenessProbe:
+                        httpGet:
+                            path: /
+                            port: http
+                        initialDelaySeconds: 30
+                        periodSeconds: 10
+                        timeoutSeconds: 5
+                        successThreshold: 1
+                        failureThreshold: 3
+                    readinessProbe:
+                        httpGet:
+                            path: /
+                            port: http
+                        initialDelaySeconds: 5
+                        periodSeconds: 5
+                        timeoutSeconds: 3
+                        successThreshold: 1
+                        failureThreshold: 3
+                    env:
+                        -   name: NODE_ENV
+                            value: "production"
+                        # Volume mounts if needed for config
+                        # volumeMounts:
+                        # - name: nginx-config
+                        #   mountPath: /etc/nginx/conf.d
+            # Volumes if needed
+            # volumes:
+            # - name: nginx-config
+            #   configMap:
+            #     name: react-starter-kit-nginx-config
+            restartPolicy: Always
+            terminationGracePeriodSeconds: 30

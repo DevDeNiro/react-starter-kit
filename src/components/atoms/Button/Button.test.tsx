@@ -20,10 +20,10 @@ describe("Button", () => {
     async () => {
       render(<Button {...props} />);
       const button = screen.getByText(label);
-      expect(button).toContain(label);
+      expect(button).toHaveTextContent(label);
       await userEvent.click(button);
       expect(props.handleClick).toHaveBeenCalled();
     },
-    { timeout: 5000 },
+    5000,
   );
 });

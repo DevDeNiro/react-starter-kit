@@ -2,13 +2,14 @@ import js from "@eslint/js";
 import globals from "globals";
 import reactHooks from "eslint-plugin-react-hooks";
 import reactRefresh from "eslint-plugin-react-refresh";
-import tseslint, { plugin } from "typescript-eslint";
+import tseslint from "typescript-eslint";
 // FIX: "lint": --max-warnings 0 --fix
 export default tseslint.config({
   ignores: [
     "dist",
     "vite.config.ts",
     "coverage/**",
+    "storybook-static/**",
     "*.html",
     "*.css",
     "build/**",

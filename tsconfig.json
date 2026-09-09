@@ -3,13 +3,10 @@
     "baseUrl": ".",
     "paths": {
       "@/*": [
-        "./*"
+        "./src/*"
       ],
       "@shared/*": [
         "./src/shared/*"
-      ],
-      "@modules/*": [
-        "./src/modules/*"
       ],
       "@components/*": [
         "./src/components/*"
@@ -26,6 +23,12 @@
       "@pages/*": [
         "./src/components/pages/*"
       ],
+      "@app/*": [
+        "./src/app/*"
+      ],
+      "@hooks/*": [
+        "./src/shared/hooks/*"
+      ]
     },
     "target": "ES2020",
     "useDefineForClassFields": true,
@@ -37,7 +40,7 @@
     "module": "ESNext",
     "skipLibCheck": true,
     /* Bundler options */
-    "moduleResolution": "node",
+    "moduleResolution": "bundler",
     "allowImportingTsExtensions": true,
     "resolveJsonModule": true,
     "isolatedModules": true,
@@ -50,11 +53,21 @@
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true,
     "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+
     "types": [
-      "vite/client"
+      "vite/client",
+      "node"
     ]
   },
   "include": [
-    "src"
+    "src/**/*",
+    "vite.config.ts"
+  ],
+  "exclude": [
+    "node_modules",
+    "dist",
+    "build"
   ]
 }
