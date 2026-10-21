@@ -1,8 +1,8 @@
 # Stage 1: Build the React app
 FROM node:22-alpine AS build
 
-# Install pnpm globally
-RUN npm install -g pnpm
+# Install pnpm v9 globally (matches lockfile version)
+RUN npm install -g pnpm@9
 
 # Set working directory
 WORKDIR /app
@@ -17,7 +17,7 @@ RUN pnpm install
 COPY . .
 
 # Build the React app
-RUN pnpm run build
+RUN pnpm exec vite build
 
 # Stage 2: Serve the app with Nginx
 FROM nginx:alpine

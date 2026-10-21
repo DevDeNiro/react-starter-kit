@@ -8,7 +8,7 @@ resources:
     - namespace.yaml
     - deployment.yaml
     - service.yaml
-    - ingress.yaml
+    - httproute.yaml
 
 # Common labels applied to all resources
 labels:
